@@ -42,7 +42,7 @@ export class CdkStarterStack extends cdk.Stack {
     
     //this will not print information it will available only after deployed. 
     //because all this code happen locally.
-    console.log("bucket name:"+ myL2Bucket.bucketName);
+    // console.log("bucket name:"+ myL2Bucket.bucketName);
 
     //using cloud formation output it can find the information out right in console
     //CloudFormation outputs are a great way in which different cloudformation stacks can share information between them.
