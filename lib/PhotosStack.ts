@@ -1,17 +1,21 @@
 import * as cdk from 'aws-cdk-lib'
+import { Fn } from 'aws-cdk-lib';
 import { Bucket, CfnBucket } from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
 
 export class PhotosStack extends cdk.Stack{
-constructor(scope:Construct,id:string,props?:cdk.StackProps) {
-    super(scope,id,props);
+
+    private stackSuffix:string;
+    constructor(scope:Construct,id:string,props?:cdk.StackProps) {
+        super(scope,id,props);
    
     // new Bucket(this,'PhotosBucket');
     //if rename the contruct id , aws will create and replace the resource
     // then delete the old one
     //in order to overide the construct id when need to refactor there is a way to manually specify the logicalid/constructid to make sure it wont recreated and then deleted
-    const myBucket = new Bucket(this,'PhotosBucket');
-    (myBucket.node.defaultChild as CfnBucket).overrideLogicalId("PhotosBucketv2")
+    
+    // const myBucket = new Bucket(this,'PhotosBucket');
+    // (myBucket.node.defaultChild as CfnBucket).overrideLogicalId("PhotosBucketv2")
 
     //The construct ID is a name you assign in code when you create a resource.
     // CDK uses this construct ID (plus a hash for uniqueness) to generate the logical ID, which CloudFormation uses in the template.
@@ -28,5 +32,14 @@ constructor(scope:Construct,id:string,props?:cdk.StackProps) {
     // | Logical ID   | CloudFormation | Identifies the resource in the CloudFormation stack     |
     // | Physical ID  | AWS Resource   | Globally unique (like the S3 bucket name or Lambda ARN) |
 
-}
+
+    //Intrinsic function sample
+        this.initializeSuffix();
+        new Bucket(this,'PhotosBucket',{bucketName:`photos-bucket-${this.stackSuffix}`});
+    }
+
+    private initializeSuffix(){
+        const shortStackId = Fn.select(2,Fn.split('/',this.stackId));
+        this.stackSuffix = Fn.select(4,Fn.split('-',shortStackId));
+    }
 }
